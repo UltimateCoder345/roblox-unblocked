@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Roblox Unblocked</title>
+<style>
+  html,body {
+    height:100%;
+    margin:0;
+    background:#000;
+    font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  }
+
+  .screen {
+    position:fixed;
+    inset:0;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+
+  .video-wrap {
+    position:relative;
+    width:100%;
+    height:100%;
+    background:#000;
+  }
+
+  /* Video hidden by default */
+  video#mainVideo {
+    display:none;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    background:#000;
+  }
+
+  .overlay {
+    position:absolute;
+    left:50%;
+    top:12%;
+    transform:translateX(-50%);
+    text-align:center;
+    pointer-events:none;
+    color:#fff;
+    text-shadow:0 6px 20px rgba(0,0,0,0.7);
+    font-weight:800;
+    letter-spacing:0.6px;
+    display:none;
+    z-index:4;
+  }
+  .overlay .ip { font-size:48px; margin:0 0 8px 0; }
+  .overlay .city { font-size:22px; opacity:0.95; margin:0; }
+
+  .center-controls {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    z-index:6;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+    align-items:center;
+    text-align:center;
+  }
+  .title {
+    font-size:28px;
+    font-weight:700;
+    color:#fff;
+    text-shadow:0 4px 18px rgba(0,0,0,0.8);
+  }
+  .btn {
+    border:0;
+    background:#ff385c;
+    color:white;
+    padding:14px 26px;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    font-size:16px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  }
+  .btn:active{transform:translateY(1px)}
+</style>
+</head>
+<body>
+  <div class="screen">
+    <div class="video-wrap" id="videoWrap">
+      <!-- Video file, hidden until Load clicked -->
+      <video id="mainVideo" preload="auto" playsinline>
+        <source src="ssstik.io_@clips.586_1758073419960.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+      </video>
+
+      <!-- Overlay text -->
+      <div class="overlay" id="overlay">
+        <div class="ip" id="ipText"></div>
+        <div class="city" id="cityText"></div>
+      </div>
+
+      <!-- Load button + title -->
+      <div class="center-controls" id="controls">
+        <div class="title">Unblocked Roblox Games</div>
+        <button id="loadBtn" class="btn">Load</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(async function(){
+  const loadBtn = document.getElementById('loadBtn');
+  const overlay = document.getElementById('overlay');
+  const ipText = document.getElementById('ipText');
+  const cityText = document.getElementById('cityText');
+  const video = document.getElementById('mainVideo');
+  const controls = document.getElementById('controls');
+
+  const LOCATION_API = 'https://ipapi.co/json/';
+
+  loadBtn.addEventListener('click', async () => {
+    loadBtn.disabled = true;
+    loadBtn.textContent = 'Loading…';
+
+    // Fetch IP and City
+    let ip = 'Unknown IP';
+    let city = 'Unknown City';
+    try {
+      const r = await fetch(LOCATION_API, {cache:'no-store'});
+      if (r.ok) {
+        const j = await r.json();
+        if (j.ip) ip = j.ip;
+        city = j.city || j.region || j.country_name || city;
+      }
+    } catch (err) {
+      console.warn('fetch failed', err);
+    }
+
+    ipText.textContent = ip;
+    cityText.textContent = city;
+    overlay.style.display = 'block';
+
+    // Show and play video
+    video.style.display = 'block';
+    try {
+      await video.play();
+    } catch (err) {
+      try {
+        video.muted = true;
+        await video.play();
+      } catch (err2) {
+        console.warn('video play failed', err2);
+      }
+    }
+
+    // Hide Load button + title
+    controls.style.display = 'none';
+  });
+
+  video.addEventListener('ended', () => {
+    overlay.style.display = 'none';
+    controls.style.display = 'flex';
+    video.style.display = 'none';
+    loadBtn.textContent = 'Load Again';
+    loadBtn.disabled = false;
+  });
+})();
+</script>
+</body>
+</html>
